@@ -1,9 +1,19 @@
-FROM ubuntu:16.04
+FROM jkd395/centos:7.8
 
-RUN apt-get update && apt-get install -y openssh-server dnsutils sshuttle iputils-ping net-tools curl
+RUN yum install -y openssh-server net-tools curl git
+RUN curl https://bootstrap.pypa.io/get-pip.py -o /root/get-pip.py
+RUN python /root/get-pip.py && pip install -U pip
+RUN pip install sshuttle
 RUN mkdir /var/run/sshd
 RUN echo 'root:root' | chpasswd
 RUN sed -i 's/PermitRootLogin prohibit-password/PermitRootLogin yes/' /etc/ssh/sshd_config
+
+# generate sshd key
+RUN ssh-keygen -t rsa -f /etc/ssh/ssh_host_rsa_key
+RUN ssh-keygen -t dsa -f /etc/ssh/ssh_host_dsa_key
+RUN ssh-keygen -t ecdsa -f /etc/ssh/ssh_host_ecdsa_key
+RUN ssh-keygen -t ed25519 -f /etc/ssh/ssh_host_ed25519_key
+
 # SSH login fix. Otherwise user is kicked off after login
 RUN sed 's@session\s*required\s*pam_loginuid.so@session optional pam_loginuid.so@g' -i /etc/pam.d/sshd
 

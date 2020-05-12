@@ -18,7 +18,7 @@ func (s *Cli) Connect(remoteHost, privateKeyPath string, remotePort int, DNSServ
 	}
 
 	if debug {
-		args = append(args, "-v")
+		args = append(args, "-vv")
 	}
 
 	subCommand := fmt.Sprintf("ssh -oStrictHostKeyChecking=no -oUserKnownHostsFile=/dev/null -i %s", privateKeyPath)
